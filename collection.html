@@ -113,7 +113,7 @@
                     <p><strong>Collection:</strong> ${nft.collection}</p>
                     <p><strong>Contract:</strong> ${nft.contract}</p>
                     <p><strong>Token Standard:</strong> ${nft.token_standard}</p>
-                    <button onclick="reserveNFT('${nft.identifier}')">Reserve NFT</button>
+                    <button onclick="reserveNFT('${nft.identifier}', '${nft.contract}')">Reserve NFT</button>
                     <button onclick="openOpenSea('${nft.opensea_url}')">View on OpenSea</button>
                     <p><strong>Updated At:</strong> ${new Date(nft.updated_at).toLocaleString()}</p>
                 `;
@@ -123,28 +123,55 @@
         }
 
         async function reserveNFT(tokenId) {
-           
+    const userAddress = prompt("Please enter your wallet address:");
+    if (!userAddress) {
+        alert("Wallet address is required to reserve the NFT.");
+        return;
+    }
+
     try {
-        const response = await fetch('http://localhost:3000/reserveNFT', {
+        
+        const approveResponse = await fetch('http://localhost:3000/approve', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                tokenId: tokenId
+                tokenAddress: '0xb518fdcf0e8285eade313798445f74918d68eaf2', // Replace with your actual token address
+                operatorAddress: userAddress
             })
         });
 
-        const data = await response.json();
+        const approveData = await approveResponse.json();
         
-        if (response.ok) {
-            alert('NFT reserved successfully!');
+        if (!approveResponse.ok) {
+            throw new Error('Error approving NFT: ' + (approveData.error || approveData.message || 'Unknown error'));
+        }
+
+
+        const transferResponse = await fetch('http://localhost:3000/transfer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                operatorAddress: userAddress,
+                tokenAddress: '0xb518fdcf0e8285eade313798445f74918d68eaf2', // Replace with your actual token address
+                tokenId: tokenId,
+                amount: '1'
+            })
+        });
+
+         const transferData = await transferResponse.json();
+        
+        if (transferResponse.ok) {
+            alert('NFT reserved and transferred successfully! Transaction Hash: ' + transferData.transferHash);
         } else {
-            alert('Error reserving NFT: ' + (data.error || data.message || 'Unknown error'));
+            throw new Error('Error transferring NFT: ' + (transferData.error || transferData.message || 'Unknown error'));
         }
     } catch (error) {
-        console.error('Error reserving NFT:', error);
-        alert('Error reserving NFT: ' + error.message);
+        console.error('Error reserving and transferring NFT:', error);
+        alert('Error: ' + error.message);
     }
 }
 
