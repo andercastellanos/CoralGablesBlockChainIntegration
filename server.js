@@ -57,6 +57,22 @@ try {
     process.exit(1);
 } // End Account
 
+
+// Check Balance Function 
+const checkBalance = async () => {
+    const balance = await web3.eth.getBalance(account.address);
+    console.log(`Account balance: ${web3.utils.fromWei(balance, 'ether')} AVAX`);
+    if (web3.utils.fromWei(balance, 'ether') < 0.1) {
+      console.warn('Warning: Account balance is low. Transactions may fail.');
+    }
+  }; // end check balance function 
+
+
+
+  checkBalance();
+
+
+
 // Approval function
 const approveNFT = async (tokenAddress, operatorAddress) => {
     try {

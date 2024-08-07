@@ -1,0 +1,142 @@
+body {
+    background-color: #FFFFFF;
+    color: #007073;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.logo {
+    max-width: 70px;
+    max-height: 60px; 
+    width: auto; 
+    height: auto; 
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+#navTitle {
+    display: flex;
+    align-items: center;
+    margin-left: 10px; 
+}
+.container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007073;
+    color: #ffffff;
+
+    width: 100%;
+    max-width: 100%;
+    background: linear-gradient(270deg, #ff7e5f, #007073);
+    background-size: 400% 400%;
+    animation: gradient-animation 5s ease infinite;
+}
+
+@keyframes gradient-animation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+.nav-item {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    margin-top: 5px;
+    margin-right: 20px;
+
+}
+
+#navTitle {
+    margin-left: 20px;
+    font-size: 30px;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+#navigationBar{
+    padding-left: 16px;
+    padding-right: 16px;}
+
+
+.nav-links a {
+    color: #ffffff;
+    margin-left: 20px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+@media screen and (max-width: 450px) {
+    #navTitle {
+        font-size: 20px; 
+    }
+    
+    .nav-links {
+        margin-top: 10px; 
+    }
+}
+
+.contact-section {
+    background: #ffffff;
+    border: 2px solid #007073; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.contactHeading{
+    font-size: 28px;
+    color: #007073;
+}
+.contact-name h2 {
+    color: #007073; 
+    font-size: 1.5rem;
+}
+
+.contact-name .border-bottom {
+    border-bottom: 2px solid #007073; 
+}
+
+.text-dark {
+    color: #212529;
+}
+
+.text-dark a {
+    color: #007073; 
+    text-decoration: none;
+}
+
+.text-dark a:hover {
+    text-decoration: underline;
+}
+
+.email-link {
+    color: #007073; 
+    text-decoration: none;
+    margin-left: 8px;
+}
+
+.email-link:hover {
+    text-decoration: underline;
+}
+
+.text-dark svg {
+    margin-right: 8px;
+}
