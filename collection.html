@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City of Coral Gables Trees NFTs</title>
+    <style>
+        body {
+            background-color: #FFFFFF;
+            color: #187342;
+            font-family: Arial, sans-serif;
+        }
+        .nft-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .nft-item {
+            border: 1px solid #187342;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px;
+            width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #f0f0f0;
+        }
+        .nft-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .nft-item h3 {
+            margin: 0 0 8px;
+            font-size: 18px;
+        }
+        .nft-item p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+        .nft-item button {
+            background-color: #187342;
+            color: #FFFFFF;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #187342;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>City of Coral Gables Trees NFTs</h1>
+    <div class="nft-container" id="nft-container"></div>
+
+    <script>
+        const apiUrl = 'https://api.opensea.io/api/v2/collection/city-of-coral-gables-smart-contract-test-CrAKZ717H/nfts?limit=20';
+        const apiKey = 'e5f2096c0db349c7bb75161029b21c6e';
+
+        async function fetchNFTs() {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'x-api-key': apiKey
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                displayNFTs(data.nfts);
+            } catch (error) {
+                console.error('Error fetching NFTs:', error);
+            }
+        }
+
+        function displayNFTs(nfts) {
+            
+            const container = document.getElementById('nft-container');
+
+            let count = 0;
+            nfts.forEach((nft, index) => {
+                if (nft.name === 'Coral Gables Banyan Tree' && count > 0) {
+                    return;
+                } else if (nft.name === 'Coral Gable Oak Tree' ||
+                           nft.name === 'City of Coral Gables Smart Contract Test') {
+                    return;
+                }
+
+                const newIdentifier = ++count;
+                if (newIdentifier > 9) return;
+
+                const nftItem = document.createElement('div');
+                nftItem.className = 'nft-item';
+                console.log(nft);
+
+                nftItem.innerHTML = `
+                    <img src="${nft.image_url}" alt="${nft.name}">
+                    <h3>${nft.name}</h3>
+                    <p><strong>Identifier:</strong> ${newIdentifier}</p>
+                    <p><strong>Collection:</strong> ${nft.collection}</p>
+                    <p><strong>Contract:</strong> ${nft.contract}</p>
+                    <p><strong>Token Standard:</strong> ${nft.token_standard}</p>
+                    <button onclick="reserveNFT('${nft.identifier}', '${nft.contract}')">Reserve NFT</button>
+                    <button onclick="openOpenSea('${nft.opensea_url}')">View on OpenSea</button>
+                    <p><strong>Updated At:</strong> ${new Date(nft.updated_at).toLocaleString()}</p>
+                `;
+
+                container.appendChild(nftItem);
+            });
+        }
+
+        async function reserveNFT(tokenId) {
+    const userAddress = prompt("Please enter your wallet address:");
+    if (!userAddress) {
+        alert("Wallet address is required to reserve the NFT.");
+        return;
+    }
+
+    try {
+        
+        const approveResponse = await fetch('http://localhost:3000/approve', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tokenAddress: '0xb518fdcf0e8285eade313798445f74918d68eaf2', // Replace with your actual token address
+                operatorAddress: userAddress
+            })
+        });
+
+        const approveData = await approveResponse.json();
+        
+        if (!approveResponse.ok) {
+            throw new Error('Error approving NFT: ' + (approveData.error || approveData.message || 'Unknown error'));
+        }
+
+
+        const transferResponse = await fetch('http://localhost:3000/transfer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                operatorAddress: userAddress,
+                tokenAddress: '0xb518fdcf0e8285eade313798445f74918d68eaf2', // Replace with your actual token address
+                tokenId: tokenId,
+                amount: '1'
+            })
+        });
+
+         const transferData = await transferResponse.json();
+        
+        if (transferResponse.ok) {
+            alert('NFT reserved and transferred successfully! Transaction Hash: ' + transferData.transferHash);
+        } else {
+            throw new Error('Error transferring NFT: ' + (transferData.error || transferData.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error reserving and transferring NFT:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+
+        function openOpenSea(openseaUrl) {
+            window.open(openseaUrl, '_blank');
+        }
+
+        window.onload = fetchNFTs;
+    </script>
+</body>
+</html>
+
